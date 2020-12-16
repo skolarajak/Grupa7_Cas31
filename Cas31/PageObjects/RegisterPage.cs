@@ -94,9 +94,8 @@ namespace Cas31.PageObjects
 
         public void EnterPasswordAgain(string password)
         {
-            this.ExplicitWait();
-            this.waitElementToBeClickable(By.Name("lozinkaOpet"));
             this.inputPasswordRepeat.SendKeys(password);
+            this.ExplicitWait(500);
         }
 
         public HomePage ClickOnButtonRegister()
