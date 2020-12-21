@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PageObjects\BasePage.cs" />
+    <Compile Include="PageObjects\CartPage.cs" />
+    <Compile Include="PageObjects\CheckoutPage.cs" />
     <Compile Include="PageObjects\HomePage.cs" />
     <Compile Include="PageObjects\LoginPage.cs" />
     <Compile Include="PageObjects\RegisterPage.cs" />

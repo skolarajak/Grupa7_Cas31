@@ -48,6 +48,40 @@ namespace Cas31
             Assert.AreEqual(true, home.IsAlertSuccessVisible());
         }
 
+        [Test]
+        [Category("Shop")]
+        public void TestLoginAndOrder()
+        {
+            HomePage home = new HomePage(this.driver);
+            home.GoToPage();
+
+            LoginPage login = home.ClickOnLinkLogin();
+            login.EnterUsername("abcd");
+            login.EnterPassword("abcd");
+
+            home = login.ClikOnButtonLogin();
+            Assert.AreEqual(true, home.IsUserLoggedIn());
+
+            if (home.IsCartEmpty() == false)
+            {
+                // Checkout any outstanding orders, before continuing with the test
+                CartPage emptyCart = new CartPage(this.driver);
+                CheckoutPage checkout = emptyCart.ClickOnButtonCheckout();
+                home = checkout.ClickOnButtonBack();
+            }
+
+            string package = "pro";
+            string quantity = "5";
+
+            CartPage cart = home.SelectPackage(package, quantity);
+            Assert.AreEqual(true, cart.IsDisplayed());
+            
+            Assert.AreEqual(true, cart.VerifyItemNameAndQuantity(package, quantity));
+            Assert.AreEqual(false, cart.VerifyItemNameAndQuantity(package, "6"));
+            Assert.AreEqual(false, cart.VerifyItemNameAndQuantity("enterprise", quantity));
+            Assert.AreEqual(false, cart.VerifyItemNameAndQuantity("starter", "1"));
+        }
+
         [SetUp]
         public void SetUp()
         {

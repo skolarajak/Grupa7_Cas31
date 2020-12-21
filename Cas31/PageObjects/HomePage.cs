@@ -1,10 +1,10 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace Cas31.PageObjects
 {
     class HomePage : BasePage
     {
-        //private IWebDriver driver;
 
         public HomePage(IWebDriver driver) : base(driver)
         {
@@ -43,6 +43,14 @@ namespace Cas31.PageObjects
             }
         }
 
+        public IWebElement linkViewCart
+        {
+            get
+            {
+                return this.FindElement(By.LinkText("View shopping cart"));
+            }
+        }
+
         public IWebElement alertSuccess
         {
             get
@@ -74,6 +82,16 @@ namespace Cas31.PageObjects
             return this.alertSuccess.Displayed;
         }
 
+        public bool IsCartEmpty()
+        {
+            linkViewCart.Click();
+            this.ExplicitWait(500);
+            IWebElement alert = this.FindElement(
+                By.XPath("//div[@role='alert' and contains(text(), 'Your cart is empty.')]")
+            );
+            return alert != null;
+        }
+
         public LoginPage ClickOnLinkLogin()
         {
             linkLogin.Click();
@@ -88,6 +106,33 @@ namespace Cas31.PageObjects
             this.waitElementToBeVisible(By.Name("register"));
             this.ExplicitWait(500);
             return new RegisterPage(this.driver);
+        }
+
+        public CartPage ClickOnLinkViewCart()
+        {
+            linkViewCart.Click();
+            this.ExplicitWait(500);
+            this.waitElementToBeVisible(
+                By.XPath("//h1[contains(., 'Quality Assurance (QA) course - Order')]")
+            );
+            return new CartPage(this.driver);
+        }
+
+        public CartPage SelectPackage(string package, string quantity)
+        {
+            IWebElement dropdown = this.FindElement(
+                By.XPath($"//div//h3[contains(text(), '{package}')]//ancestor::div[contains(@class, 'panel')]//select")
+            );
+            SelectElement select = new SelectElement(dropdown);
+            select.SelectByValue(quantity);
+
+            IWebElement buttonOrder = this.FindElement(
+                By.XPath($"//div//h3[contains(text(), '{package}')]//ancestor::div[contains(@class, 'panel')]//input[@type='submit']")
+            );
+
+            buttonOrder.Click();
+            this.ExplicitWait(500);
+            return new CartPage(this.driver);
         }
 
     }
