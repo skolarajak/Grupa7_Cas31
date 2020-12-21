@@ -65,37 +65,31 @@ namespace Cas31.PageObjects
         public void EnterFirstName(string firstName)
         {
             this.inputFirstName.SendKeys(firstName);
-            this.ExplicitWait(500);
         }
 
         public void EnterLastName(string lastName)
         {
             this.inputLastName.SendKeys(lastName);
-            this.ExplicitWait(500);
         }
 
         public void EnterEmail(string email)
         {
             this.inputEmail.SendKeys(email);
-            this.ExplicitWait(500);
         }
 
         public void EnterUsername(string username)
         {
             this.inputUsername.SendKeys(username);
-            this.ExplicitWait(500);
         }
 
         public void EnterPassword(string password)
         {
             this.inputPassword.SendKeys(password);
-            this.ExplicitWait(500);
         }
 
         public void EnterPasswordAgain(string password)
         {
             this.inputPasswordRepeat.SendKeys(password);
-            this.ExplicitWait(500);
         }
 
         public HomePage ClickOnButtonRegister()

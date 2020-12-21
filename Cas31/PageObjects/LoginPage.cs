@@ -35,13 +35,11 @@ namespace Cas31.PageObjects
         public void EnterUsername(string username)
         {
             this.inputUsername.SendKeys(username);
-            this.ExplicitWait(500);
         }
 
         public void EnterPassword(string password)
         {
             this.inputPassword.SendKeys(password);
-            this.ExplicitWait(500);
         }
 
         public HomePage ClikOnButtonLogin()

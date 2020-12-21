@@ -40,7 +40,7 @@ namespace Cas31.PageObjects
             return wait.Until(EC.ElementToBeClickable(selector));
         }
 
-        protected void ExplicitWait(int miliseconds = 20)
+        protected void ExplicitWait(int miliseconds = 50)
         {
             System.Threading.Thread.Sleep(miliseconds);
         }

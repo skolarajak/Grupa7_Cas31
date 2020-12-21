@@ -59,6 +59,7 @@ namespace Cas31
         public void TearDown()
         {
             this.driver.Close();
+            this.driver.Dispose();
         }
 
         public void Sleep(int miliseconds = 500)
