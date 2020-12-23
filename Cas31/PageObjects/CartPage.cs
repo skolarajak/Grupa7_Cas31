@@ -40,6 +40,22 @@ namespace Cas31.PageObjects
             return itemQty.Text == quantity;
         }
 
+        public bool VerifyShipping(string shipping)
+        {
+            shipping = shipping.ToUpper();
+
+            IWebElement itemShipping = this.FindElement(
+                By.XPath("//table/tbody/tr[contains(., 'Shipping')]/td[3]")
+            );
+
+            if (itemShipping == null)
+            {
+                return false;
+            }
+
+            return itemShipping.Text == shipping;
+        }
+
         public CheckoutPage ClickOnButtonCheckout()
         {
             this.buttonCheckout.Click();
