@@ -6,12 +6,14 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Cas31.PageObjects;
 using Cas31.Libraries;
+using System.Text.RegularExpressions;
 
 namespace Cas31
 {
     class Tests
     {
         private IWebDriver driver;
+        private Functions func;
 
         [Test]
         [Category("Shop")]
@@ -167,11 +169,98 @@ namespace Cas31
             Logger.info(testName, "Finished test.");
         }
 
+        [Test]
+        [Category("Shop")]
+        public void TestAddMultipleItems()
+        {
+            string testName = "TestAddMultipleItems()";
+            Logger.separator('=');
+            Logger.info(testName, "Starting test.");
+
+            CSV csv = new CSV(@"C:\Kurs\user.csv");
+            string[] data = csv.GetLine(0);
+
+            HomePage home = new HomePage(this.driver);
+            home.GoToPage();
+
+            LoginPage login = home.ClickOnLinkLogin();
+            Logger.info(testName, $"Attempting to log in as user '{data[0]}'.");
+            login.EnterUsername(data[0]);
+            login.EnterPassword(data[1]);
+            home = login.ClikOnButtonLogin();
+
+            Assert.AreEqual(true, home.IsUserLoggedIn());
+            Logger.info(testName, "User is logged in.");
+
+            CheckoutPage checkout;
+            if (home.IsCartEmpty() == false)
+            {
+                Logger.info(testName, "Cart was not empty, clearing the cart.");
+                // Checkout any outstanding orders, before continuing with the test
+                CartPage emptyCart = new CartPage(this.driver);
+                checkout = emptyCart.ClickOnButtonCheckout();
+                home = checkout.ClickOnButtonBack();
+            }
+
+            string[] packages = { "starter", "small", "pro", "enterprise" };
+            CartPage cart;
+            int cartTotal = 0;
+
+            foreach(string package in packages)
+            {
+                string quantity = this.func.RandomNumber(1, 10);
+
+                Logger.info(
+                    testName,
+                    string.Format("Adding item \"{0}\" {1}x", package, quantity)
+                );
+                cart = home.SelectPackage(package, quantity);
+                Assert.AreEqual(true, cart.IsDisplayed());
+                Assert.AreEqual(true, cart.VerifyItemNameAndQuantity(package, quantity));
+
+                string q, ppi, total;
+                cart.GetItemData(package, out q, out ppi, out total);
+                cartTotal += Convert.ToInt32(this.func.ExtractNumbers(total));
+                Logger.info(
+                    testName,
+                    string.Format("Added item \"{0}\" {1}x {2} = {3}", package, q, ppi, total)
+                );
+
+                home = cart.ClickOnButtonContinueShopping();
+            }
+            cart = home.ClickOnLinkViewCart();
+            
+            string pageCartTotal = this.func.ExtractNumbers(cart.GetCartTotal());
+
+            Logger.info(testName, $"Calculated cart total = {cartTotal}");
+            Logger.info(testName, $"Page cart total = {pageCartTotal}");
+
+            Assert.AreEqual(cartTotal.ToString(), pageCartTotal);
+
+            checkout = cart.ClickOnButtonCheckout();
+
+            //string orderNumber = this.func.ExtractNumbers(checkout.labelOrderNo.Text);
+            //string orderAmount = this.func.ExtractNumbers(checkout.labelAmount.Text);
+            string orderNumber = Regex.Match(checkout.labelOrderNo.Text, @"\d+").Value;
+            string orderAmount = Regex.Match(checkout.labelAmount.Text, @"\d+").Value;
+
+            Logger.info(testName, $"Order #{orderNumber} billed ${orderAmount}");
+
+            home = checkout.ClickOnButtonBack();
+            HistoryPage history = home.ClickOnLinkOrderHistory();
+
+            bool verified = history.VerifyOrderPriceAndStatus(orderNumber, orderAmount + ".00");
+
+            Logger.info(testName, $"Status ordered = {verified.ToString()}");
+            Assert.AreEqual(true, verified);
+        }
+
         [SetUp]
         public void SetUp()
         {
             this.driver = new ChromeDriver();
             this.driver.Manage().Window.Maximize();
+            this.func = new Functions();
         }
 
         [TearDown]

@@ -51,6 +51,14 @@ namespace Cas31.PageObjects
             }
         }
 
+        public IWebElement linkOrderHistory
+        {
+            get
+            {
+                return this.FindElement(By.LinkText("Order history"));
+            }
+        }
+
         public IWebElement alertSuccess
         {
             get
@@ -116,6 +124,14 @@ namespace Cas31.PageObjects
                 By.XPath("//h1[contains(., 'Quality Assurance (QA) course - Order')]")
             );
             return new CartPage(this.driver);
+        }
+
+        public HistoryPage ClickOnLinkOrderHistory()
+        {
+            linkOrderHistory.Click();
+            this.ExplicitWait(500);
+            this.waitElementToBeVisible(By.XPath("//h1[contains(., 'Order History')]"));
+            return new HistoryPage(this.driver);
         }
 
         public CartPage SelectPackage(string package, string quantity)

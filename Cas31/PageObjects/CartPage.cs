@@ -17,6 +17,14 @@ namespace Cas31.PageObjects
             }
         }
 
+        public IWebElement buttonContinueShopping
+        {
+            get
+            {
+                return this.FindElement(By.LinkText("Continue shopping"));
+            }
+        }
+
         public bool IsDisplayed()
         {
             IWebElement labelCart = this.FindElement(
@@ -56,11 +64,45 @@ namespace Cas31.PageObjects
             return itemShipping.Text == shipping;
         }
 
+        public string GetCartTotal()
+        {
+            IWebElement cartTotal = this.FindElement(
+                By.XPath("//table/tbody/tr/td[contains(., 'Total:')]")
+            );
+            return cartTotal.Text;
+        }
+
+        public void GetItemData(string package, out string quantity, out string pricePerItem, out string priceTotal)
+        {
+            package = package.ToUpper();
+
+            IWebElement itemQty = this.FindElement(
+                By.XPath($"//table/tbody/tr[contains(., \"{package}\")]/td[2]")
+            );
+            IWebElement itemPPI = this.FindElement(
+                By.XPath($"//table/tbody/tr[contains(., \"{package}\")]/td[3]")
+            );
+            IWebElement itemTotal = this.FindElement(
+                By.XPath($"//table/tbody/tr[contains(., \"{package}\")]/td[4]")
+            );
+
+            quantity = itemQty.Text;
+            pricePerItem = itemPPI.Text;
+            priceTotal = itemTotal.Text;
+        }
+
         public CheckoutPage ClickOnButtonCheckout()
         {
             this.buttonCheckout.Click();
             this.ExplicitWait(500);
             return new CheckoutPage(this.driver);
+        }
+
+        public HomePage ClickOnButtonContinueShopping()
+        {
+            this.buttonContinueShopping.Click();
+            this.ExplicitWait(500);
+            return new HomePage(this.driver);
         }
     }
 }

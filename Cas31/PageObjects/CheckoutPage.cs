@@ -17,6 +17,22 @@ namespace Cas31.PageObjects
             }
         }
 
+        public IWebElement labelOrderNo
+        {
+            get
+            {
+                return this.FindElement(By.XPath("//h2[contains(., 'Order #')]"));
+            }
+        }
+
+        public IWebElement labelAmount
+        {
+            get
+            {
+                return this.FindElement(By.XPath("//h3[contains(., 'amount of ')]"));
+            }
+        }
+
         public HomePage ClickOnButtonBack()
         {
             this.buttonBack.Click();
